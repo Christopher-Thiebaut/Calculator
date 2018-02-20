@@ -11,6 +11,7 @@ import UIKit
 class CalculatorViewController: UIViewController {
     
     @IBOutlet weak var mainDisplayLabel: UILabel!
+    @IBOutlet weak var secondaryDisplayLabel: UILabel!
     
     //MARK: - OperationButtons
     @IBOutlet weak var multiplyButton: UIButton!
@@ -18,12 +19,28 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet weak var subtractButton: UIButton!
     
-    var selectedButton: UIButton?
+    //MARK: - Store Buttons
     
-    var displayNumber: Double = 0
+   
+    
+    
+    //MARK: - Stateful Properties
+    
+    var selectedButton: UIButton?
+    var displayNumber: Double = 0 {
+        didSet {
+            
+        }
+    }
     var hasDecimal = false
-    let numberFormatter = NumberFormatter()
+    var showingAnswer = false
+    var pushedOperand = false
     let mathController = MathController()
+    
+    
+    let numberFormatter = NumberFormatter()
+    
+    //MARK: - Lifecycle Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,8 +49,16 @@ class CalculatorViewController: UIViewController {
         mathController.delegate = self
     }
     
+    //MARK: - Number Building Methods
     
     @IBAction func digitTapped(_ sender: UIButton) {
+        
+        pushedOperand = false
+        
+        if showingAnswer {
+            mainDisplayLabel.text = "0"
+            showingAnswer = false
+        }
         
         guard let buttonText = sender.titleLabel?.text else {
             NSLog("Invalid digit button pressed.  Button had no text.")
@@ -58,7 +83,14 @@ class CalculatorViewController: UIViewController {
         updateDisplay()
     }
     
+    
     @IBAction func backspaceTapped(_ sender: UIButton) {
+        if showingAnswer {
+            displayNumber = 0
+            updateDisplay()
+            showingAnswer = false
+            return
+        }
         guard let displayString = mainDisplayLabel.text else {
             return
         }
@@ -104,16 +136,39 @@ class CalculatorViewController: UIViewController {
         mathController.pushOperator(MathController.Operation.add)
     }
     
+    @IBAction func subtractionButtonTapped(_ sender: UIButton) {
+        pushOperand()
+        mathController.pushOperator(MathController.Operation.subtract)
+    }
+    
+    @IBAction func multiplicationButtonTapped(_ sender: UIButton) {
+        pushOperand()
+        mathController.pushOperator(MathController.Operation.multiply)
+    }
+    
+    @IBAction func divisionButtonTapped(_ sender: UIButton) {
+        pushOperand()
+        mathController.pushOperator(MathController.Operation.divide)
+    }
+    
     @IBAction func performOperation() {
         pushOperand()
         mathController.performSelectedOperation()
     }
     
+    //MARK: - Private Helper Methods
+    
     private func pushOperand(){
+        guard !pushedOperand else {
+            NSLog("Did not push operand because the user hasn't done any input since an operand was pushed.")
+            return
+        }
         do{
             try mathController.pushOperand(displayNumber)
-            displayNumber = 0
-            updateDisplay()
+            showingAnswer = true
+//            displayNumber = 0
+//            updateDisplay()
+            pushedOperand = true
         }catch let error {
             NSLog("Error pushing operand in preparation to push operator: \(error.localizedDescription)")
         }
@@ -128,39 +183,69 @@ class CalculatorViewController: UIViewController {
         mainDisplayLabel.text = displayString
     }
     
-    private func updateSelectedButtonTo(_ button: UIButton){
-        selectedButton?.isHighlighted = false
+    private func updateSelectedButtonTo(_ button: UIButton?){
+        selectedButton?.layer.borderWidth = 0
+        selectedButton = nil
+        guard let button = button else {
+            return
+        }
         selectedButton = button
-        button.isHighlighted = true
+        button.layer.borderWidth = 5
+        button.layer.borderColor = UIColor.white.cgColor
+    }
+    
+    private func appendToSecondaryDisplay(_ text: String){
+        guard let secondaryText = secondaryDisplayLabel.text else {
+            NSLog("Cannot update secondary display with operator because there is no operand.")
+            return
+        }
+        secondaryDisplayLabel.text = "\(secondaryText) \(text)"
     }
 }
 
+//MARK: - MathControllerDelegate
 extension CalculatorViewController : MathControllerDelegate {
     func mathController(_ controller: MathController, changedFirstOperandTo operand: Double) {
-        //TODO: update an auxiliary display to show an operation in progress.
+        let operandWrapper = NSNumber(value: operand)
+        guard let operandString = numberFormatter.string(from: operandWrapper) else {
+            fatalError("Received non-numerical operator.")
+        }
+        secondaryDisplayLabel.text = operandString
     }
     
     func mathController(_ controller: MathController, changedSecondOperandTo operand: Double) {
-        //Doesn't need to do anything at this time.
+        let operandWrapper = NSNumber(value: operand)
+        guard let operandString = numberFormatter.string(from: operandWrapper) else {
+            fatalError("Received non-numerical operator.")
+        }
+        appendToSecondaryDisplay(operandString)
     }
     
-    func mathController(_ controller: MathController, changedOperationTo operation: MathController.Operation) {
+    func mathController(_ controller: MathController, changedOperationTo operation: MathController.Operation?) {
+        guard let operation = operation else {
+            updateSelectedButtonTo(nil)
+            return
+        }
         switch operation {
         case .add:
             updateSelectedButtonTo(addButton)
+            appendToSecondaryDisplay("+")
         case .subtract:
             updateSelectedButtonTo(subtractButton)
+            appendToSecondaryDisplay("-")
         case .multiply:
             updateSelectedButtonTo(multiplyButton)
+            appendToSecondaryDisplay("x")
         case .divide:
             updateSelectedButtonTo(divideButton)
+            appendToSecondaryDisplay("÷")
         }
     }
     
     func mathController(_ controller: MathController, performedOperationWithResult result: Double) {
         displayNumber = result
         updateDisplay()
+        showingAnswer = true
+        pushedOperand = false
     }
-    
-    
 }

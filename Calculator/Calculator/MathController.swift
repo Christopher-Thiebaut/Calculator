@@ -11,7 +11,7 @@ import Foundation
 protocol MathControllerDelegate: class {
     func mathController(_ controller: MathController, changedFirstOperandTo operand: Double)
     func mathController(_ controller: MathController, changedSecondOperandTo operand: Double)
-    func mathController(_ controller: MathController, changedOperationTo operation: MathController.Operation)
+    func mathController(_ controller: MathController, changedOperationTo operation: MathController.Operation?)
     func mathController(_ controller: MathController, performedOperationWithResult: Double)
 }
 
@@ -58,29 +58,47 @@ class MathController {
             self.operation = operation
             delegate?.mathController(self, changedOperationTo: operation)
         }else if firstOperand != nil && secondOperand != nil && self.operation != nil {
-            performSelectedOperation()
+            performSelectedOperation(chainingOperation: operation)
         }
     }
     
-    func performSelectedOperation(){
+    func performSelectedOperation() {
+        performSelectedOperation(chainingOperation: nil)
+    }
+    
+    private func performSelectedOperation(chainingOperation: Operation? = nil){
         guard let firstOperand = firstOperand, let operation = operation else {
             NSLog("Tried to perform math with no operation or no operand. It didn't work.")
             return
         }
         let secondOperand = self.secondOperand != nil ? self.secondOperand! : firstOperand
-        self.firstOperand = nil
-        self.secondOperand = nil
-        self.operation = nil
+        
+        delegate?.mathController(self, changedOperationTo: nil)
+        var result: Double
         switch operation {
         case .add:
-            delegate?.mathController(self, performedOperationWithResult: firstOperand + secondOperand)
+            result = firstOperand + secondOperand
         case .subtract:
-            delegate?.mathController(self, performedOperationWithResult: firstOperand - secondOperand)
+            result = firstOperand - secondOperand
         case .multiply:
-            delegate?.mathController(self, performedOperationWithResult: firstOperand * secondOperand)
+            result = firstOperand * secondOperand
         case .divide:
-            delegate?.mathController(self, performedOperationWithResult: firstOperand / secondOperand)
+            result = firstOperand / secondOperand
         }
+        
+        if chainingOperation == nil {
+            self.firstOperand = nil
+            self.secondOperand = nil
+            self.operation = nil
+        }else{
+            self.firstOperand = result
+            delegate?.mathController(self, changedFirstOperandTo: result)
+            self.operation = chainingOperation
+            delegate?.mathController(self, changedOperationTo: chainingOperation)
+            self.secondOperand = nil
+        }
+        
+        delegate?.mathController(self, performedOperationWithResult: result)
     }
     
 }
