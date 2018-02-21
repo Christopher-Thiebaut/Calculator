@@ -335,7 +335,7 @@ class CalculatorViewController: UIViewController {
             }
             button.setTitle(storedValueString, for: .normal)
             if displayNumber == 0 {
-                buttonLabel.text = "Use"
+                buttonLabel.text = "Use:"
                 button.backgroundColor = UIColor.customGreen
             }else{
                 buttonLabel.text = "Overwrite:"

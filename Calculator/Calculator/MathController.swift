@@ -49,6 +49,7 @@ class MathController {
             secondOperand = operand
             delegate?.mathController(self, changedSecondOperandTo: operand)
         }else{
+            performSelectedOperation()
             throw MathControllerError.tooManyOperands
         }
     }
@@ -67,10 +68,18 @@ class MathController {
     }
     
     private func performSelectedOperation(chainingOperation: Operation? = nil){
-        guard let firstOperand = firstOperand, let operation = operation else {
-            NSLog("Tried to perform math with no operation or no operand. It didn't work.")
+        guard let firstOperand = firstOperand else {
+            NSLog("Tried to perform math with no operand. It didn't work.")
             return
         }
+        
+        guard let operation = operation else {
+            self.firstOperand = nil
+            self.secondOperand = nil
+            delegate?.mathController(self, performedOperationWithResult: firstOperand)
+            return
+        }
+        
         let secondOperand = self.secondOperand != nil ? self.secondOperand! : firstOperand
         
         delegate?.mathController(self, changedOperationTo: nil)
