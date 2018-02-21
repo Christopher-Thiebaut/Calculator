@@ -173,6 +173,10 @@ class CalculatorViewController: UIViewController {
             return
         }
         hasDecimal = true
+        if showingAnswer {
+            displayNumber = 0
+            updateDisplay()
+        }
     }
     
     @IBAction func storeButton1Tapped(_ sender: UIButton) {
