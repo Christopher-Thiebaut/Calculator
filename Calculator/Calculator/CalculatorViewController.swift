@@ -22,19 +22,26 @@ class CalculatorViewController: UIViewController {
     //MARK: - Store Buttons
     @IBOutlet weak var storeButton1: UIButton!
     @IBOutlet weak var storeLabel1: UILabel!
-    var storedNumber1: Double?
+    var storedNumber1: Double? {
+        didSet {
+            PersistenceController.save(values: (displayNumber,storedNumber1,storedNumber2))
+        }
+    }
     @IBOutlet weak var storeButton2: UIButton!
     @IBOutlet weak var storeLabel2: UILabel!
-    var storedNumber2: Double?
-    
-    
-    
+    var storedNumber2: Double?{
+        didSet {
+            PersistenceController.save(values: (displayNumber,storedNumber1,storedNumber2))
+        }
+    }
+
     //MARK: - Stateful Properties
     
     var selectedButton: UIButton?
     var displayNumber: Double = 0 {
         didSet {
             updateStoreButtonStates()
+            PersistenceController.save(values: (displayNumber,storedNumber1,storedNumber2))
         }
     }
     var hasDecimal = false {
@@ -52,6 +59,8 @@ class CalculatorViewController: UIViewController {
     let numberFormatter = NumberFormatter()
     let maxDigits = 15
     let maxDecimalDigits = 10
+    let positiveInfinitySymbol = "Error"
+    let negativeInfinitySymbol = "Error"
     
     //MARK: - Lifecycle Methods
     
@@ -60,12 +69,22 @@ class CalculatorViewController: UIViewController {
         numberFormatter.minimumFractionDigits = 0
         numberFormatter.maximumFractionDigits = maxDecimalDigits
         numberFormatter.maximumIntegerDigits = maxDigits
-        numberFormatter.positiveInfinitySymbol = "Error"
-        numberFormatter.negativeInfinitySymbol = "Error"
         mathController.delegate = self
         
-        Styler.applyStyles()
+        let values = PersistenceController.loadValues()
+        if let stored1 = values?.storedValue1 {
+            storedNumber1 = stored1
+        }
+        if let stored2 = values?.storedValue2 {
+            storedNumber2 = stored2
+        }
+        if let screen = values?.screen {
+            displayNumber = screen
+        }
+        updateDisplay()
+        updateStoreButtonStates()
     }
+
     
     //MARK: - Number Building Methods
     
@@ -178,9 +197,6 @@ class CalculatorViewController: UIViewController {
         }
     }
     
-    
-    
-    
     //MARK: - Operators
     
     @IBAction func additionButtonTapped(_ sender: UIButton) {
@@ -231,12 +247,25 @@ class CalculatorViewController: UIViewController {
             mainDisplayLabel.text = displayString
         }
     }
-    
-    private func numberAsString(_ number: Double) -> String? {
-        //TODO: Make another temporary number formatter for displaying on the buttons as the other one is now stateful.
+    /**
+    Produce a string representing the provided number.
+     - parameter number: A double representing the number you want a String for
+     - parameter useDefaultNumberFormatter: If true, uses the number formatter owned by the view controller, otherwise creates a temporary number formatter with reasonable defaults.
+     - returns: A String representing number
+     */
+    private func numberAsString(_ number: Double , useDefaultNumberFormatter: Bool = true) -> String? {
+        var formatter: NumberFormatter
+        if useDefaultNumberFormatter {
+            formatter = numberFormatter
+        }else{
+            formatter = NumberFormatter()
+            formatter.minimumFractionDigits = 0
+            formatter.maximumFractionDigits = maxDecimalDigits
+            formatter.maximumIntegerDigits = maxDigits
+        }
         let numberWrapper = NSNumber(value: number)
         if abs(number) < pow(Double(10), Double(maxDigits)){
-            guard let displayString = numberFormatter.string(from: numberWrapper)  else {
+            guard let displayString = formatter.string(from: numberWrapper)  else {
                 NSLog("Error prducing string for number.  Incompatible number format for numberFormatter.")
                 return nil
             }
@@ -246,6 +275,8 @@ class CalculatorViewController: UIViewController {
             bigNumberFormatter.numberStyle = .scientific
             bigNumberFormatter.positiveFormat = "0.###E+0"
             bigNumberFormatter.negativeFormat = "-0.###E+0"
+            bigNumberFormatter.positiveInfinitySymbol = positiveInfinitySymbol
+            bigNumberFormatter.negativeInfinitySymbol = negativeInfinitySymbol
             guard let displayString = bigNumberFormatter.string(from: numberWrapper) else{
                 NSLog("Error producing string for number.  Incompatible number format for numberFormatter.")
                 return nil
@@ -285,26 +316,31 @@ class CalculatorViewController: UIViewController {
     private func updateStoreButtonStates(){
         updateStoreButtonState(storeButton1, buttonLabel: storeLabel1, storedValue: storedNumber1)
         updateStoreButtonState(storeButton2, buttonLabel: storeLabel2, storedValue: storedNumber2)
+        if storeLabel1.text == storeLabel2.text {
+            storeLabel2.isHidden = true
+        }else{
+            storeLabel2.isHidden = false
+        }
     }
     
     private func updateStoreButtonState(_ button: UIButton, buttonLabel: UILabel, storedValue: Double?){
         
         if let storedValue = storedValue {
-            guard let storedValueString = numberAsString(storedValue) else {
+            guard let storedValueString = numberAsString(storedValue, useDefaultNumberFormatter: false) else {
                 fatalError("Stored number could not be displayed on button because it's not a valid number.")
             }
             button.setTitle(storedValueString, for: .normal)
             if displayNumber == 0 {
                 buttonLabel.text = "Use"
-                button.backgroundColor = UIColor.green
+                button.backgroundColor = UIColor.customGreen
             }else{
                 buttonLabel.text = "Overwrite:"
-                button.backgroundColor = UIColor.red
+                button.backgroundColor = UIColor.customRed
             }
         }else{
-            button.backgroundColor = UIColor.green
+            button.backgroundColor = UIColor.customGreen
             buttonLabel.text = "Store:"
-            guard let displayedValueString = numberAsString(displayNumber) else {
+            guard let displayedValueString = numberAsString(displayNumber, useDefaultNumberFormatter: false) else {
                 fatalError("Displayed number could not be displayed on button because it's not a valid number.")
                 }
             setButtonTitleWithoutAnimation(button: button, title: displayedValueString)
@@ -365,4 +401,14 @@ extension CalculatorViewController : MathControllerDelegate {
         showingAnswer = true
         pushedOperand = false
     }
+}
+
+extension UIColor {
+    static var customGreen : UIColor {
+        return #colorLiteral(red: 0.1855942309, green: 0.7683538198, blue: 0.7147178054, alpha: 1)
+    }
+    static var customRed : UIColor {
+        return #colorLiteral(red: 0.9044539332, green: 0.1141348854, blue: 0.2119770348, alpha: 1)
+    }
+    
 }

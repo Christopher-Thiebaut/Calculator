@@ -7,16 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3378183203DFE690098384E /* CalculatorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3378182203DFE690098384E /* CalculatorButton.swift */; };
+		B3378185203E15740098384E /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3378184203E15740098384E /* PersistenceController.swift */; };
 		B3927CCF203B765A004EFA33 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3927CCE203B765A004EFA33 /* AppDelegate.swift */; };
 		B3927CD1203B765A004EFA33 /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3927CD0203B765A004EFA33 /* CalculatorViewController.swift */; };
 		B3927CD4203B765A004EFA33 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3927CD2203B765A004EFA33 /* Main.storyboard */; };
 		B3927CD6203B765A004EFA33 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3927CD5203B765A004EFA33 /* Assets.xcassets */; };
 		B3927CD9203B765A004EFA33 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3927CD7203B765A004EFA33 /* LaunchScreen.storyboard */; };
-		B3927CE2203B80DF004EFA33 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3927CE1203B80DF004EFA33 /* Styles.swift */; };
 		B3927CE6203BA1AC004EFA33 /* MathController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3927CE5203BA1AC004EFA33 /* MathController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B3378182203DFE690098384E /* CalculatorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorButton.swift; sourceTree = "<group>"; };
+		B3378184203E15740098384E /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		B3927CCB203B765A004EFA33 /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3927CCE203B765A004EFA33 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B3927CD0203B765A004EFA33 /* CalculatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
@@ -24,7 +27,6 @@
 		B3927CD5203B765A004EFA33 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B3927CD8203B765A004EFA33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B3927CDA203B765A004EFA33 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3927CE1203B80DF004EFA33 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
 		B3927CE5203BA1AC004EFA33 /* MathController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -60,9 +62,10 @@
 			isa = PBXGroup;
 			children = (
 				B3927CD0203B765A004EFA33 /* CalculatorViewController.swift */,
-				B3927CE1203B80DF004EFA33 /* Styles.swift */,
 				B3927CD2203B765A004EFA33 /* Main.storyboard */,
 				B3927CE5203BA1AC004EFA33 /* MathController.swift */,
+				B3378182203DFE690098384E /* CalculatorButton.swift */,
+				B3378184203E15740098384E /* PersistenceController.swift */,
 			);
 			path = Calculator;
 			sourceTree = "<group>";
@@ -170,7 +173,8 @@
 				B3927CD1203B765A004EFA33 /* CalculatorViewController.swift in Sources */,
 				B3927CCF203B765A004EFA33 /* AppDelegate.swift in Sources */,
 				B3927CE6203BA1AC004EFA33 /* MathController.swift in Sources */,
-				B3927CE2203B80DF004EFA33 /* Styles.swift in Sources */,
+				B3378183203DFE690098384E /* CalculatorButton.swift in Sources */,
+				B3378185203E15740098384E /* PersistenceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,7 +318,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.christopherthiebaut.Calculator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -329,7 +333,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.christopherthiebaut.Calculator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
