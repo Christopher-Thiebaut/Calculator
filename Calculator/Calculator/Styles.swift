@@ -10,13 +10,9 @@ import UIKit
 
 enum Styler {
     static func applyStyles() {
+        UIButton.appearance().layer.cornerRadius = 20
+        UIButton.appearance().clipsToBounds = true
         //UIButton.appearance().cornerRadius = 20
     }
 }
 
-extension UIButton {
-    var cornerRadius: CGFloat {
-        get { return layer.cornerRadius }
-        set { layer.cornerRadius = newValue }
-    }
-}

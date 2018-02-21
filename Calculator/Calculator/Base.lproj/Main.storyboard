@@ -25,21 +25,27 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="wF0-ge-uDW">
                                         <rect key="frame" x="0.0" y="0.0" width="304" height="70"/>
                                         <subviews>
-                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HWS-n8-DjG">
+                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HWS-n8-DjG">
                                                 <rect key="frame" x="0.0" y="0.0" width="109.5" height="70"/>
-                                                <color key="backgroundColor" red="0.50789135694503784" green="0.83667033910751343" blue="0.32535755634307861" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                                <state key="normal" title="Store">
+                                                <color key="backgroundColor" red="0.0" green="0.97680455450000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <fontDescription key="fontDescription" name=".SFNSDisplay" family=".SF NS Display" pointSize="15"/>
+                                                <state key="normal" title="Save Value">
                                                     <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="storeButton1Tapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Oh8-TX-ayP"/>
+                                                </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Go-ap-cQb">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Go-ap-cQb">
                                                 <rect key="frame" x="117.5" y="0.0" width="109" height="70"/>
-                                                <color key="backgroundColor" red="0.50789135694503784" green="0.83667033910751343" blue="0.32535755634307861" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                                <state key="normal" title="Store">
+                                                <color key="backgroundColor" red="0.0" green="0.97680455450000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <fontDescription key="fontDescription" name=".SFNSDisplay" family=".SF NS Display" pointSize="15"/>
+                                                <state key="normal" title="Save Number">
                                                     <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
+                                                <connections>
+                                                    <action selector="storeButton2Tapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="wy0-fL-723"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IMN-TH-Jfa">
                                                 <rect key="frame" x="234.5" y="0.0" width="69.5" height="70"/>
@@ -327,18 +333,36 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9EW-Vs-VJF">
+                                <rect key="frame" x="8" y="174" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Klv-ly-Nqq">
+                                <rect key="frame" x="125.5" y="174" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="tintColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="q4N-re-kgN" firstAttribute="trailing" secondItem="Bb0-dE-MTL" secondAttribute="trailing" id="1ta-A8-i8F"/>
+                            <constraint firstItem="9EW-Vs-VJF" firstAttribute="leading" secondItem="HWS-n8-DjG" secondAttribute="leading" id="4e1-Ir-QSd"/>
+                            <constraint firstItem="wF0-ge-uDW" firstAttribute="top" secondItem="9EW-Vs-VJF" secondAttribute="bottom" constant="4" id="5pN-77-cNZ"/>
                             <constraint firstItem="Y6i-J2-8St" firstAttribute="width" secondItem="6Tk-OE-BBY" secondAttribute="width" constant="-16" id="64j-Zq-aYp"/>
                             <constraint firstItem="Bb0-dE-MTL" firstAttribute="leading" secondItem="XM3-w6-yMe" secondAttribute="trailing" constant="8" id="6Kk-Lm-05y"/>
+                            <constraint firstItem="Y6i-J2-8St" firstAttribute="top" secondItem="Klv-ly-Nqq" secondAttribute="bottom" constant="4" id="DFh-AR-9Ic"/>
                             <constraint firstItem="XM3-w6-yMe" firstAttribute="top" secondItem="q4N-re-kgN" secondAttribute="bottom" constant="8" id="GuJ-vF-ZEd"/>
                             <constraint firstItem="Bb0-dE-MTL" firstAttribute="centerY" secondItem="XM3-w6-yMe" secondAttribute="centerY" id="Knm-ZK-cHq"/>
                             <constraint firstItem="q4N-re-kgN" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" symbolic="YES" id="MbN-sw-hcI"/>
                             <constraint firstItem="Y6i-J2-8St" firstAttribute="top" secondItem="XM3-w6-yMe" secondAttribute="bottom" constant="16" id="STW-Ne-hOK"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Bb0-dE-MTL" secondAttribute="trailing" constant="8" id="YCt-CW-YQW"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="9EW-Vs-VJF" secondAttribute="trailing" constant="20" symbolic="YES" id="YxE-is-kIk"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Klv-ly-Nqq" secondAttribute="trailing" constant="20" symbolic="YES" id="Zai-xY-Vwv"/>
+                            <constraint firstItem="Klv-ly-Nqq" firstAttribute="leading" secondItem="1Go-ap-cQb" secondAttribute="leading" id="ei2-4W-uD4"/>
                             <constraint firstItem="Y6i-J2-8St" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pHW-eI-0XH"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Y6i-J2-8St" secondAttribute="bottom" constant="8" id="wm6-MX-qYu"/>
                             <constraint firstItem="XM3-w6-yMe" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="zqy-Jg-2G6"/>
@@ -351,6 +375,10 @@
                         <outlet property="mainDisplayLabel" destination="XM3-w6-yMe" id="6Jx-bu-b2i"/>
                         <outlet property="multiplyButton" destination="qJW-Nt-Yc9" id="NBY-da-AHH"/>
                         <outlet property="secondaryDisplayLabel" destination="q4N-re-kgN" id="OWy-DA-M46"/>
+                        <outlet property="storeButton1" destination="HWS-n8-DjG" id="kgi-t7-V7R"/>
+                        <outlet property="storeButton2" destination="1Go-ap-cQb" id="Ipf-Uz-xjO"/>
+                        <outlet property="storeLabel1" destination="9EW-Vs-VJF" id="qe3-eC-gSB"/>
+                        <outlet property="storeLabel2" destination="Klv-ly-Nqq" id="5ux-8E-ccV"/>
                         <outlet property="subtractButton" destination="f7E-Wz-dji" id="DBK-bY-WRF"/>
                     </connections>
                 </viewController>

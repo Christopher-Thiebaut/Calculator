@@ -20,8 +20,13 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var subtractButton: UIButton!
     
     //MARK: - Store Buttons
+    @IBOutlet weak var storeButton1: UIButton!
+    @IBOutlet weak var storeLabel1: UILabel!
+    var storedNumber1: Double?
+    @IBOutlet weak var storeButton2: UIButton!
+    @IBOutlet weak var storeLabel2: UILabel!
+    var storedNumber2: Double?
     
-   
     
     
     //MARK: - Stateful Properties
@@ -29,24 +34,37 @@ class CalculatorViewController: UIViewController {
     var selectedButton: UIButton?
     var displayNumber: Double = 0 {
         didSet {
-            
+            updateStoreButtonStates()
         }
     }
-    var hasDecimal = false
+    var hasDecimal = false {
+        didSet{
+            if !hasDecimal {
+                numberFormatter.minimumFractionDigits = 0
+            }
+        }
+    }
     var showingAnswer = false
     var pushedOperand = false
     let mathController = MathController()
     
     
     let numberFormatter = NumberFormatter()
+    let maxDigits = 15
+    let maxDecimalDigits = 10
     
     //MARK: - Lifecycle Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         numberFormatter.minimumFractionDigits = 0
-        numberFormatter.maximumFractionDigits = 10
+        numberFormatter.maximumFractionDigits = maxDecimalDigits
+        numberFormatter.maximumIntegerDigits = maxDigits
+        numberFormatter.positiveInfinitySymbol = "Error"
+        numberFormatter.negativeInfinitySymbol = "Error"
         mathController.delegate = self
+        
+        Styler.applyStyles()
     }
     
     //MARK: - Number Building Methods
@@ -68,11 +86,20 @@ class CalculatorViewController: UIViewController {
             fatalError("Invalid state.  Main display was blank.")
         }
         
-        if !hasDecimal || displayString.contains("."){
-            displayString += "\(buttonText)"
-        }else{
-            displayString += ".\(buttonText)"
+        let splitByDecimal = displayString.split(separator: ".")
+        
+        //Check and see if the user is still allowed to add more digits. If not, the button press should do nothing.
+        if !hasDecimal && splitByDecimal[0].count >= maxDigits{
+            return
+        }else if splitByDecimal.count > 1 && hasDecimal && splitByDecimal[1].count >= maxDecimalDigits  {
+            return
         }
+        
+        if !displayString.contains(".") && hasDecimal{
+            displayString += "."
+            numberFormatter.minimumFractionDigits += 1
+        }
+        displayString += "\(buttonText)"
         
         guard let number = Double(displayString) else {
             fatalError("Addition of new digit could not be processed because it did not form a valid double when appended to the display.")
@@ -129,6 +156,31 @@ class CalculatorViewController: UIViewController {
         hasDecimal = true
     }
     
+    @IBAction func storeButton1Tapped(_ sender: UIButton) {
+        if let storedNumber = storedNumber1, displayNumber == 0{
+            displayNumber = storedNumber
+            updateDisplay()
+            pushedOperand = false
+        }else if displayNumber != 0 {
+            storedNumber1 = displayNumber
+            updateStoreButtonStates()
+        }
+    }
+    
+    @IBAction func storeButton2Tapped(_ sender: UIButton) {
+        if let storedNumber = storedNumber2, displayNumber == 0{
+            displayNumber = storedNumber
+            updateDisplay()
+            pushedOperand = false
+        }else if displayNumber != 0 {
+            storedNumber2 = displayNumber
+            updateStoreButtonStates()
+        }
+    }
+    
+    
+    
+    
     //MARK: - Operators
     
     @IBAction func additionButtonTapped(_ sender: UIButton) {
@@ -165,9 +217,9 @@ class CalculatorViewController: UIViewController {
         }
         do{
             try mathController.pushOperand(displayNumber)
-            showingAnswer = true
-//            displayNumber = 0
-//            updateDisplay()
+            displayNumber = 0
+            hasDecimal = false
+            updateDisplay()
             pushedOperand = true
         }catch let error {
             NSLog("Error pushing operand in preparation to push operator: \(error.localizedDescription)")
@@ -175,12 +227,31 @@ class CalculatorViewController: UIViewController {
     }
     
     private func updateDisplay(){
-        let number = NSNumber(value: displayNumber)
-        guard let displayString = numberFormatter.string(from: number)  else {
-            NSLog("Error updating display.  Incompatible number format for numberFormatter.")
-            return
+        if let displayString = numberAsString(displayNumber) {
+            mainDisplayLabel.text = displayString
         }
-        mainDisplayLabel.text = displayString
+    }
+    
+    private func numberAsString(_ number: Double) -> String? {
+        //TODO: Make another temporary number formatter for displaying on the buttons as the other one is now stateful.
+        let numberWrapper = NSNumber(value: number)
+        if abs(number) < pow(Double(10), Double(maxDigits)){
+            guard let displayString = numberFormatter.string(from: numberWrapper)  else {
+                NSLog("Error prducing string for number.  Incompatible number format for numberFormatter.")
+                return nil
+            }
+            return displayString
+        }else{
+            let bigNumberFormatter = NumberFormatter()
+            bigNumberFormatter.numberStyle = .scientific
+            bigNumberFormatter.positiveFormat = "0.###E+0"
+            bigNumberFormatter.negativeFormat = "-0.###E+0"
+            guard let displayString = bigNumberFormatter.string(from: numberWrapper) else{
+                NSLog("Error producing string for number.  Incompatible number format for numberFormatter.")
+                return nil
+            }
+            return displayString
+        }
     }
     
     private func updateSelectedButtonTo(_ button: UIButton?){
@@ -201,21 +272,64 @@ class CalculatorViewController: UIViewController {
         }
         secondaryDisplayLabel.text = "\(secondaryText) \(text)"
     }
+    
+    private func removeOperatorFromSecondaryDisplay(){
+        guard var secondaryText = secondaryDisplayLabel.text else {
+            NSLog("Cannot remove operator from secondary display text because there is no text.")
+            return
+        }
+        secondaryText = secondaryText.components(separatedBy: CharacterSet.whitespaces)[0]
+        secondaryDisplayLabel.text = secondaryText
+    }
+    
+    private func updateStoreButtonStates(){
+        updateStoreButtonState(storeButton1, buttonLabel: storeLabel1, storedValue: storedNumber1)
+        updateStoreButtonState(storeButton2, buttonLabel: storeLabel2, storedValue: storedNumber2)
+    }
+    
+    private func updateStoreButtonState(_ button: UIButton, buttonLabel: UILabel, storedValue: Double?){
+        
+        if let storedValue = storedValue {
+            guard let storedValueString = numberAsString(storedValue) else {
+                fatalError("Stored number could not be displayed on button because it's not a valid number.")
+            }
+            button.setTitle(storedValueString, for: .normal)
+            if displayNumber == 0 {
+                buttonLabel.text = "Use"
+                button.backgroundColor = UIColor.green
+            }else{
+                buttonLabel.text = "Overwrite:"
+                button.backgroundColor = UIColor.red
+            }
+        }else{
+            button.backgroundColor = UIColor.green
+            buttonLabel.text = "Store:"
+            guard let displayedValueString = numberAsString(displayNumber) else {
+                fatalError("Displayed number could not be displayed on button because it's not a valid number.")
+                }
+            setButtonTitleWithoutAnimation(button: button, title: displayedValueString)
+        }
+    }
+    
+    private func setButtonTitleWithoutAnimation(button: UIButton, title: String){
+        UIView.performWithoutAnimation {
+            button.setTitle(title, for: .normal)
+            button.layoutIfNeeded()
+        }
+    }
 }
 
 //MARK: - MathControllerDelegate
 extension CalculatorViewController : MathControllerDelegate {
     func mathController(_ controller: MathController, changedFirstOperandTo operand: Double) {
-        let operandWrapper = NSNumber(value: operand)
-        guard let operandString = numberFormatter.string(from: operandWrapper) else {
+        guard let operandString = numberAsString(operand) else {
             fatalError("Received non-numerical operator.")
         }
         secondaryDisplayLabel.text = operandString
     }
     
     func mathController(_ controller: MathController, changedSecondOperandTo operand: Double) {
-        let operandWrapper = NSNumber(value: operand)
-        guard let operandString = numberFormatter.string(from: operandWrapper) else {
+        guard let operandString = numberAsString(operand) else {
             fatalError("Received non-numerical operator.")
         }
         appendToSecondaryDisplay(operandString)
@@ -226,6 +340,9 @@ extension CalculatorViewController : MathControllerDelegate {
             updateSelectedButtonTo(nil)
             return
         }
+        
+        removeOperatorFromSecondaryDisplay()
+        
         switch operation {
         case .add:
             updateSelectedButtonTo(addButton)
