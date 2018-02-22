@@ -239,7 +239,7 @@ class CalculatorViewController: UIViewController {
     
     //MARK: - Private Helper Methods
     /**
-        If the number being displayed has not already been sent to the mathController, sends the number being displayed to the mathController as an operand and marks the number being displayed as overwiteable so the next change will replace it instead of appending to it.  The displayed number is not reset to zero because that would create a situation in which it appears to the user they are about to perform an operation with zero, but the operation would be performed with the most recent value instead. 
+        If the number being displayed has not already been sent to the mathController, sends the number being displayed to the mathController as an operand and marks the number being displayed as overwiteable so the next change will replace it instead of appending to it.  The displayed number is not reset to zero because that would create a situation in which it appears to the user they are about to perform an operation with zero, but the operation would be performed with the most recent value instead.
      */
     private func pushOperand(){
         guard !pushedOperand else {
@@ -301,6 +301,9 @@ class CalculatorViewController: UIViewController {
         }
     }
     
+    /**
+        Use this function and its associated property to mark for the user which operand is currently selected by giving it a white border.
+    */
     private func updateSelectedButtonTo(_ button: UIButton?){
         selectedButton?.layer.borderWidth = 0
         selectedButton = nil
@@ -312,6 +315,9 @@ class CalculatorViewController: UIViewController {
         button.layer.borderColor = UIColor.white.cgColor
     }
     
+    /**
+        Appends the specified text to the secondary display which is right above the main display that shows the result of calculations. The secondary display is meant to show the next operation to be performed by displaying any operands or operator that have already been selected.
+     */
     private func appendToSecondaryDisplay(_ text: String){
         guard let secondaryText = secondaryDisplayLabel.text else {
             NSLog("Cannot update secondary display with operator because there is no operand.")
@@ -320,6 +326,9 @@ class CalculatorViewController: UIViewController {
         secondaryDisplayLabel.text = "\(secondaryText) \(text)"
     }
     
+    /**
+        Use this function to remove any operator present in the secondary display while keeing any text that was before the operator (like an operand). This is usually done because the user switched what operator is selected and you need to remove the old one from the display before adding the new one.
+     */
     private func removeOperatorFromSecondaryDisplay(){
         guard var secondaryText = secondaryDisplayLabel.text else {
             NSLog("Cannot remove operator from secondary display text because there is no text.")
@@ -329,6 +338,9 @@ class CalculatorViewController: UIViewController {
         secondaryDisplayLabel.text = secondaryText
     }
     
+    /**
+        Update the appearance of the store value buttons to make it clear to the user what pressing the button in the current context will do.
+    */
     private func updateStoreButtonStates(){
         updateStoreButtonState(storeButton1, buttonLabel: storeLabel1, storedValue: storedNumber1)
         updateStoreButtonState(storeButton2, buttonLabel: storeLabel2, storedValue: storedNumber2)
@@ -339,6 +351,12 @@ class CalculatorViewController: UIViewController {
         }
     }
     
+    /**
+        Update the state of the provided button and label based on the provided storedValue and the number on the main display.
+     - parameter button: The button to be updated. This should probably be storeButton1 or storeButton2.
+     - parameter buttonLabel: A label to update with the function the button will perform if pressed. The label should be visually associated with the button if this is going to make any sense. This is expected to be storeLabel1 or storeLabel2 (whichever is associated with the provided button).
+     - parameter storedValue: This should be storedNumber1 or storedNumber2, whichever is associated with the provided button.
+    */
     private func updateStoreButtonState(_ button: UIButton, buttonLabel: UILabel, storedValue: Double?){
         
         if let storedValue = storedValue {
@@ -363,6 +381,9 @@ class CalculatorViewController: UIViewController {
         }
     }
     
+    /**
+        Changes the button's title without the usual fade in-out animation which accompanies most button title changes. This is needed so that the storedValueButtons' titles can be updated while the user is typing a number.  With the animation, the button would usually be blank until the user finished input.
+     */
     private func setButtonTitleWithoutAnimation(button: UIButton, title: String){
         UIView.performWithoutAnimation {
             button.setTitle(title, for: .normal)
