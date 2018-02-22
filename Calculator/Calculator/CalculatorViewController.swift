@@ -51,10 +51,9 @@ class CalculatorViewController: UIViewController {
             }
         }
     }
-    var showingAnswer = false
+    var overwriteDisplayedNumber = false
     var pushedOperand = false
     let mathController = MathController()
-    
     
     let numberFormatter = NumberFormatter()
     let maxDigits = 15
@@ -87,14 +86,16 @@ class CalculatorViewController: UIViewController {
 
     
     //MARK: - Number Building Methods
-    
+    /**
+        Append a digit represented by the button which was tapped to the number being displayed, or replace the number with the digit if the number being displayed was the result of a previous calculation. Also, the calculator only supports numbers of a certain size, so nothing will be appended if the calculator has reached that limit.
+     */
     @IBAction func digitTapped(_ sender: UIButton) {
         
         pushedOperand = false
         
-        if showingAnswer {
+        if overwriteDisplayedNumber {
             mainDisplayLabel.text = "0"
-            showingAnswer = false
+            overwriteDisplayedNumber = false
         }
         
         guard let buttonText = sender.titleLabel?.text else {
@@ -129,12 +130,14 @@ class CalculatorViewController: UIViewController {
         updateDisplay()
     }
     
-    
+    /**
+        Remove the last digit from the number being displayed. If the number being displayed is the result of a previous calculation, the whole number is deleted as the assumption is the user wants to clear it in order to perform new calculations.
+     */
     @IBAction func backspaceTapped(_ sender: UIButton) {
-        if showingAnswer {
+        if overwriteDisplayedNumber {
             displayNumber = 0
             updateDisplay()
-            showingAnswer = false
+            overwriteDisplayedNumber = false
             return
         }
         guard let displayString = mainDisplayLabel.text else {
@@ -173,12 +176,15 @@ class CalculatorViewController: UIViewController {
             return
         }
         hasDecimal = true
-        if showingAnswer {
+        if overwriteDisplayedNumber {
             displayNumber = 0
             updateDisplay()
         }
     }
     
+    /**
+        If there is a non-zero number being displayed, saves it to this button's associated stored value.  If not, enters this button's associated stored value as the value being displayed.
+     */
     @IBAction func storeButton1Tapped(_ sender: UIButton) {
         if let storedNumber = storedNumber1, displayNumber == 0{
             displayNumber = storedNumber
@@ -190,6 +196,9 @@ class CalculatorViewController: UIViewController {
         }
     }
     
+    /**
+     If there is a non-zero number being displayed, saves it to this button's associated stored value.  If not, enters this button's associated stored value as the value being displayed.
+     */
     @IBAction func storeButton2Tapped(_ sender: UIButton) {
         if let storedNumber = storedNumber2, displayNumber == 0{
             displayNumber = storedNumber
@@ -229,7 +238,9 @@ class CalculatorViewController: UIViewController {
     }
     
     //MARK: - Private Helper Methods
-    
+    /**
+        If the number being displayed has not already been sent to the mathController, sends the number being displayed to the mathController as an operand and marks the number being displayed as overwiteable so the next change will replace it instead of appending to it.  The displayed number is not reset to zero because that would create a situation in which it appears to the user they are about to perform an operation with zero, but the operation would be performed with the most recent value instead. 
+     */
     private func pushOperand(){
         guard !pushedOperand else {
             NSLog("Did not push operand because the user hasn't done any input since an operand was pushed.")
@@ -239,7 +250,8 @@ class CalculatorViewController: UIViewController {
             try mathController.pushOperand(displayNumber)
             displayNumber = 0
             hasDecimal = false
-            updateDisplay()
+            overwriteDisplayedNumber = true
+//            updateDisplay()
             pushedOperand = true
         }catch let error {
             NSLog("Error pushing operand in preparation to push operator: \(error.localizedDescription)")
@@ -402,7 +414,7 @@ extension CalculatorViewController : MathControllerDelegate {
     func mathController(_ controller: MathController, performedOperationWithResult result: Double) {
         displayNumber = result
         updateDisplay()
-        showingAnswer = true
+        overwriteDisplayedNumber = true
         pushedOperand = false
     }
 }

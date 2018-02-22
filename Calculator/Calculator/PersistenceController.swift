@@ -25,6 +25,9 @@ class PersistenceController {
         return fullURL
     }
     
+    /**
+        Save the provided values to a local file.
+     */
     static func save(values: (screen: Double?,storedValue1: Double?,storedValue2: Double?)){
         var dictionary: [String:Double?] = [:]
         dictionary.updateValue(values.screen, forKey: StorageKeys.screenValue.rawValue)
@@ -38,6 +41,9 @@ class PersistenceController {
         }
     }
     
+    /**
+        Load any stored values that may exist so the state of the calculator can be restored.
+    */
     static func loadValues() -> (screen: Double?, storedValue1: Double?, storedValue2: Double?)? {
         var values: (screen: Double?, storedValue1: Double?, storedValue2: Double?) = (0,0,0)
         var dictionary: [String: Double]

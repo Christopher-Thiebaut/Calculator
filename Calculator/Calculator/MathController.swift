@@ -38,8 +38,9 @@ class MathController {
         
     }
     
-    /*!
+    /**
         Set the provided number as an operand for the MathController to perform an operation with.  If it successfully sets the operand, it will notify its delegate.  If all both operands are already set, it will throw an error.
+     - parameter operand: A Double that can be used in a calculation later.
      */
     func pushOperand(_ operand: Double) throws {
         if firstOperand == nil {
@@ -54,6 +55,10 @@ class MathController {
         }
     }
     
+    /**
+        Stores the provided operation for later calculation. If there are already an operation and 2 operands, the first operation will be performed before the pushed one is saved.
+     - parameter operation: A member of MathController.Operation specifying which operation should be performed.
+     */
     func pushOperator(_ operation: Operation){
         if (self.operation == nil || self.operation != operation) && secondOperand == nil {
             self.operation = operation
@@ -63,6 +68,9 @@ class MathController {
         }
     }
     
+    /**
+     Perform the specified operation and notify the delegate  of its results.
+    */
     func performSelectedOperation() {
         performSelectedOperation(chainingOperation: nil)
     }
