@@ -80,6 +80,7 @@ class CalculatorViewController: UIViewController {
         if let screen = values?.screen {
             displayNumber = screen
         }
+        overwriteDisplayedNumber = true
         updateDisplay()
         updateStoreButtonStates()
     }
